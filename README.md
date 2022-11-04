@@ -14,13 +14,13 @@ A simple microservice to upload DCM files, read DCM/PNG files, fetch DCM attribu
 4. 'get_header_attributes()'
 
 ## Setup
-```
+<pre>
 <b>git clone https://github.com/Kornfuzion/pocket_health_challenge</b>
 
-<bpython3 -m venv env</b>
-<bsource env/bin/activate</b>
-<bpip install -r requirements.txt</b>
-```
+<b>python3 -m venv env</b>
+<b>source env/bin/activate</b>
+<b>pip install -r requirements.txt</b>
+</pre>
 
 ## Running locally
 <pre>
