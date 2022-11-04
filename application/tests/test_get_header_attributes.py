@@ -23,6 +23,24 @@ def test_get_header_attributes(test_client: "FlaskClient", test_file_path: str) 
     assert response_data == EXPECTED_HEADER_DATA[test_file_path]
 
 
+def test_get_all_header_attributes(test_client: "FlaskClient") -> None:
+    # 1. Upload the file
+    response = upload_test_file(test_client)
+    response_data = json.loads(response.data.decode("utf-8"))
+
+    # 2. Get all attributes on the DCM file by passing empty tags set
+    storage_handle = response_data["storage_handle"]
+    response = test_client.get(
+        f"/header_attributes/{storage_handle}",
+        query_string=dict(tags="[]")
+    )
+    response_data = json.loads(response.data.decode("utf-8"))
+
+    # 3. Assert success, verify response
+    assert response.status_code == 200
+    assert len(response_data) == 258
+
+
 def test_get_header_attributes_bad_storage_handle(test_client: "FlaskClient") -> None:
     # File not found, expect HTTP 404
     tags = ["0x00080005", "0x00080008", "0x00080014"]
