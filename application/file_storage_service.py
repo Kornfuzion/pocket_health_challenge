@@ -1,9 +1,11 @@
 import os
 import uuid
-
+from pydicom.errors import InvalidDicomError
 from dicom_to_png import convert_dcm_to_png
 from flask import current_app
 from typing import Optional, Set
+import pydicom
+import io
 
 
 class FileStorageService:
@@ -15,7 +17,6 @@ class FileStorageService:
 	"""
 	DCM_EXTENSION: str = "dcm"
 	PNG_EXTENSION: str = "png"
-	ALLOWED_EXTENSIONS: Set[str] = {DCM_EXTENSION}
 
 	@classmethod
 	def get_unique_storage_handle(cls) -> str:
@@ -62,23 +63,38 @@ class FileStorageService:
 		)
 
 	@classmethod
-	def upload_file(cls, file: "FileStorage") -> str:
+	def upload_dicom_file(
+		cls, 
+		original_file: Optional["werkzeug.FileStorage"], 
+		dicom_file: "pydicom.dataset.FileDataset",
+	) -> Optional[str]:
 		storage_handle = cls.get_unique_storage_handle()
-		storage_path = cls.get_dcm_storage_path(storage_handle)
+		dicom_path = cls.get_dcm_storage_path(storage_handle)
 		image_path = cls.get_png_storage_path(storage_handle)
 
-		file.save(storage_path)
 		image = convert_dcm_to_png(
-			storage_path,
+			dicom_file,
 		)
+		original_file.save(dicom_path)
 		image.save(image_path)
 
 		return storage_handle
 
 	@classmethod
-	def validate_file(cls, file: Optional["FileStorage"]) -> bool:
-		return (
-			file and 
-			'.' in file.filename and
-			file.filename.rsplit('.', 1)[1].lower() in cls.ALLOWED_EXTENSIONS
-		)
+	def validate_dicom_file(
+		cls, 
+		file: Optional["werkzeug.FileStorage"]
+	) -> Optional["pydicom.dataset.FileDataset"]:
+		if not file:
+			return None
+
+		file_bytes = io.BytesIO(file.read())
+		# File.read() advances the file cursor to the end of the file
+		# Reset the cursor so this file can be saved to disk later
+		file.seek(0)
+
+		# We can't rely on the file extension, so load the file as DCM to validate
+		try:
+			return pydicom.dcmread(file_bytes)
+		except InvalidDicomError:
+			return None

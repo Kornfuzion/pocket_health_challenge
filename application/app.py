@@ -15,10 +15,11 @@ app.config["IMAGE_FOLDER"] = os.path.abspath("../uploads/PNG")
 @app.route('/upload_file', methods=['GET', 'POST'])
 def upload_file() -> Response:
     if request.method == 'POST':
-        file = request.files["file"] if "file" in request.files else None
-        if not FileStorageService.validate_file(file):
+        file = request.files.get("file")
+        dicom_file = FileStorageService.validate_dicom_file(file)
+        if not dicom_file:
             return "Invalid File.", 400
-        storage_handle = FileStorageService.upload_file(file)
+        storage_handle = FileStorageService.upload_dicom_file(file, dicom_file)
         return {"storage_handle": storage_handle}, 201
     elif app.config["DEBUG"]:
         # GET form for debugging uploads, not available in prod
@@ -35,6 +36,22 @@ def upload_file() -> Response:
         return "Invalid path.", 404
 
 
+@app.route("/uploads/dicom/<storage_handle>", methods=["GET"])
+def download_dicom_file(storage_handle: str) -> Response:
+    return send_from_directory(
+        app.config["DICOM_FOLDER"], 
+        FileStorageService.get_dcm_storage_handle(storage_handle),
+    )
+
+
+@app.route("/uploads/image/<storage_handle>", methods=["GET"])
+def download_image_file(storage_handle: str) -> Response:
+    return send_from_directory(
+        app.config["IMAGE_FOLDER"], 
+        FileStorageService.get_png_storage_handle(storage_handle),
+    )
+
+
 @app.route("/header_attributes/<storage_handle>", methods=["GET"])
 def get_header_attributes(storage_handle: str) -> Response:
     tags = set(json.loads(request.args.get('tags', "[]")))
@@ -45,20 +62,3 @@ def get_header_attributes(storage_handle: str) -> Response:
         )
     except FileNotFoundError:
         return "File not found.", 404
-
-
-@app.route("/uploads/image/<storage_handle>", methods=["GET"])
-def download_png_file(storage_handle: str) -> Response:
-    return send_from_directory(
-        app.config["IMAGE_FOLDER"], 
-        FileStorageService.get_png_storage_handle(storage_handle),
-    )
-
-
-@app.route("/uploads/dicom/<storage_handle>", methods=["GET"])
-def download_dcm_file(storage_handle: str) -> Response:
-    return send_from_directory(
-        app.config["DICOM_FOLDER"], 
-        FileStorageService.get_dcm_storage_handle(storage_handle),
-    )
-

@@ -1,11 +1,12 @@
-from . import test_client
+from . import test_client, test_file_path
 import json
-from test_utils import upload_test_file
+from test_utils import upload_test_file, enumerate_test_files, EXPECTED_HEADER_DATA
 
 
-def test_get_header_attributes(test_client: "FlaskClient") -> None:
+@enumerate_test_files
+def test_get_header_attributes(test_client: "FlaskClient", test_file_path: str) -> None:
     # 1. Upload the file
-    response = upload_test_file(test_client)
+    response = upload_test_file(test_client, test_file_path)
     response_data = json.loads(response.data.decode("utf-8"))
 
     # 2. Get some attributes on the DCM file by tag
@@ -17,23 +18,7 @@ def test_get_header_attributes(test_client: "FlaskClient") -> None:
     )
     response_data = json.loads(response.data.decode("utf-8"))
     assert response.status_code == 200
-    assert response_data == {
-        '(0008,0005)': {
-            'VR': 'CS', 
-            'name': 'Specific Character Set', 
-            'value': 'ISO_IR 100'
-        }, 
-        '(0008,0008)': {
-            'VR': 'CS', 
-            'name': 'Image Type', 
-            'value': "['ORIGINAL', 'PRIMARY', 'AXIAL']"
-        }, 
-        '(0008,0014)': {
-            'VR': 'UI', 
-            'name': 'Instance Creator UID', 
-            'value': '1.3.6.1.4.1.5962.3'
-        }
-    }
+    assert response_data == EXPECTED_HEADER_DATA[test_file_path]
 
 
 def test_get_header_attributes_bad_storage_handle(test_client: "FlaskClient") -> None:

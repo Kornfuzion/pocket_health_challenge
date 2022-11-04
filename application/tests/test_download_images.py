@@ -1,11 +1,12 @@
-from . import test_client
+from . import test_client, test_file_path
 import json
-from test_utils import upload_test_file
+from test_utils import upload_test_file, enumerate_test_files
 
 
-def test_image_file_download(test_client: "FlaskClient") -> None:
+@enumerate_test_files
+def test_image_file_download(test_client: "FlaskClient", test_file_path: str) -> None:
     # 1. Upload the file
-    response = upload_test_file(test_client)
+    response = upload_test_file(test_client, test_file_path)
     response_data = json.loads(response.data.decode("utf-8"))
 
     # 2. Read the file using the storage handle

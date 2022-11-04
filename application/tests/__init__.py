@@ -4,7 +4,10 @@ import os
 from typing import Generator
 
 
-TEST_FILE_PATH: str = os.path.abspath("./test_data/example.dcm")
+@pytest.fixture(scope="module")
+def test_file_path():
+    # Stub to make tests + decorators cooperate
+    pass
 
 
 @pytest.fixture(scope="module")
@@ -16,5 +19,4 @@ def test_client() -> Generator:
     with app.test_client() as testing_client:
         app.app_context().push()
         app.test_request_context().push()
-        print(type)
         yield testing_client
