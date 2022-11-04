@@ -22,13 +22,17 @@ pip install -r requirements.txt
 ## Running locally
 ```
 # Debug Mode
-flask --app app --debug run
+flask --app application/app --debug run
+
 # Production Mode
-flask --app app run
+flask --app application/app run
 ```
 <img width="1001" alt="Screen Shot 2022-11-04 at 1 11 00 PM" src="https://user-images.githubusercontent.com/7553119/200039900-bbac7bc9-9bc4-4a10-8955-aff064215bb6.png">
 
 ## Running tests
+```
+./application/tests/test.sh
+```
 <img width="999" alt="Screen Shot 2022-11-04 at 1 10 19 PM" src="https://user-images.githubusercontent.com/7553119/200039884-2c5e9a51-27b5-45d6-99a2-1639708b7580.png">
 
 ## Limitations/Notes
