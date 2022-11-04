@@ -35,6 +35,7 @@ A simple microservice to upload DCM files, read DCM/PNG files, fetch DCM attribu
 
 ## Running locally
 <pre>
+# Navigate to application folder
 <b>cd application</b>
 
 # Debug Mode
@@ -47,7 +48,10 @@ A simple microservice to upload DCM files, read DCM/PNG files, fetch DCM attribu
 
 ## Running tests
 <pre>
+# 1. Navigate to tests folder
 <b>cd application/tests</b>
+
+# 2. Run all tests
 <b>./test.sh</b>
 </pre>
 <img width="999" alt="Screen Shot 2022-11-04 at 1 10 19 PM" src="https://user-images.githubusercontent.com/7553119/200039884-2c5e9a51-27b5-45d6-99a2-1639708b7580.png">
@@ -74,3 +78,4 @@ A simple microservice to upload DCM files, read DCM/PNG files, fetch DCM attribu
    c. Message queue calls to task to perform DICOM->PNG or other image processing, upload the PNG file, remove TTL on DICOM file/ set finished_processing=True on DICOM file
    
    d. If a partial failure occurs between the DICOM upload and message enqueue, either it will eventually be deleted due to TTL or cleaned up by an async job when the file is older than N days and finished_processing=False (which should be okay if N is significantly larger than the queue latency SLA, giving some buffer for issues in production)
+5. Add unit tests + better integration test mocking to avoid actual file upload/download on the server
