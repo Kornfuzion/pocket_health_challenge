@@ -62,4 +62,4 @@ pip install -r requirements.txt
    
    c. Message queue calls to task to perform DICOM->PNG or other image processing, upload the PNG file, remove TTL on DICOM file/ set finished_processing=True on DICOM file
    
-   d. If a partial failure occurs between the DICOM upload and message enqueue, either it will eventually be deleted due to TTL or cleaned up by an async job when the file is older than N days and finished_processing=False
+   d. If a partial failure occurs between the DICOM upload and message enqueue, either it will eventually be deleted due to TTL or cleaned up by an async job when the file is older than N days and finished_processing=False (which should be okay if N is significantly larger than the queue latency SLA, giving some buffer for issues in production)
