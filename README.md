@@ -44,10 +44,10 @@ cd application/tests
 ## Limitations/Future Improvements
 1. Given the constraints of this challenge, we are using the server's local file system. This means our servers are stateful and we'd need some kind of routing scheme to figure out which users should hit which servers to find their data. Ideally we leverage a distributed file store that can scale and alsp support additional features such as access control.
 2. File name generation uses UUID, which minimizes the probability of collision, but can still cause unexpected data loss if storage_handle collides. Given a production system with user/uploader id provided, we could create an even safer file name. For example, something like:
-   '''
+   ```
    # It's unlikely for a user to upload twice in the same millisecond/microsecond AND experience UUID collision
    storage_handle = f"{user_id}{uuid()}{current_timestamp()}"
-   '''
+   ```
 3. Currently this is only configured to run locally, requiring some virtual env setup and package installation. Ideally this can be condensed into a container/Docker config for easier deployment.
 4. DICOM + PNG file uploads cannot be bundled into an atomic operation and not properly retryable on partial failure. In production, this would mean we could have duplicate/orphaned DICOM files (first request fails after DICOM upload, retried and second request succeeds in reuploading DICOM + PNG). Some ideas on how to improve on this given the time/resources:
    a. Upload the DICOM with TTL or upload the DICOM including some additional attribute finished_processing=False, upload_time=X
