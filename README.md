@@ -14,7 +14,7 @@ A simple microservice to upload DCM files, read DCM/PNG files, fetch DCM attribu
 2. **DICOM metadata tags come in a few forms: tuple (0008,0005), hex 0x00080005, hex tuple (0x0008, 0x0005), base10 int 524293**
    1. Tuples are not JSON serializable, which makes serialization and deserialization messy (requires dumping the entire tuple to str)
    2. base10 int is less readable, the information about the tag group + element is lost in this representation, which could make debugging difficult
-  - **decision: Use hex representation to simplify key as a single int/str value while maintaining readability**
+  - **decision: Use hex representation for tag query to simplify key as a single int/str value while maintaining readability**
 
 ## APIs
 1. 'upload_file()'
