@@ -1,4 +1,4 @@
-# pocket_health_challenge
+# PocketHealth Coding Challenge
 A simple microservice to upload DCM files, read DCM/PNG files, fetch DCM attributes by tag
 
 ## APIs
