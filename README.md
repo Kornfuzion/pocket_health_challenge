@@ -47,6 +47,7 @@ A simple microservice to upload DCM files, read DCM/PNG files, fetch DCM attribu
 <img width="1001" alt="Screen Shot 2022-11-04 at 1 11 00 PM" src="https://user-images.githubusercontent.com/7553119/200039900-bbac7bc9-9bc4-4a10-8955-aff064215bb6.png">
 
 ## Running tests
+The integration tests exercise all major functionality and error cases of our microservice. Files are actually being uploaded to our test server to a test directory and are subsequently deleted after tests finish running (via test.sh).
 <pre>
 # 1. Navigate to tests folder
 <b>cd application/tests</b>
@@ -55,6 +56,7 @@ A simple microservice to upload DCM files, read DCM/PNG files, fetch DCM attribu
 <b>./test.sh</b>
 </pre>
 <img width="999" alt="Screen Shot 2022-11-04 at 1 10 19 PM" src="https://user-images.githubusercontent.com/7553119/200039884-2c5e9a51-27b5-45d6-99a2-1639708b7580.png">
+Test dicom files can be added or removed, as long as they adhere to the naming scheme of example{0}.dcm -> example{n}.dcm. Tests are configured to automatically run across all test files in the test_data directory.
 
 ## Limitations/ Future Improvements
 1. Given the constraints of this challenge, we are using the server's local file system. This means our servers are stateful and we'd need some kind of routing scheme to figure out which users should hit which servers to find their data. Ideally we leverage a distributed file store that can scale and also support additional features such as access control.
