@@ -1,11 +1,20 @@
-# PocketHealth Coding Challenge
+# PocketHealth Coding Challenge: File Server
 A simple microservice to upload DCM files, read DCM/PNG files, fetch DCM attributes by tag
 
 ## Problem Statement
 [Backend_Programming_Challenge.pdf](https://github.com/Kornfuzion/pocket_health_challenge/files/9941528/Backend_Programming_Challenge.pdf)
 
 ## Design Considerations
-1. 
+1. **File names can cause a few issues**
+   1. File names can easily collide across uploads, causing data loss.
+   2. User-provided file names requires heavy input validation (check for obscure characters/ensure reasonable length/ensure file path does not cause file to be stored in unintended places in the file system)
+   3. Accessing files directly from web (using file name as query param) means file names are guessable, which can make our service more susceptible to scraping/DDOS.
+  - **decision: Generate 'unique' file name using UUID to minimize collision, avoid input validation, anonymize and randomize file names**
+
+2. **DICOM metadata tags come in a few forms: tuple (0008,0005), hex 0x00080005, hex tuple (0x0008, 0x0005), base10 int 524293**
+   1. Tuples are not JSON serializable, which makes serialization and deserialization messy (requires dumping the entire tuple to str)
+   2. base10 int is less readable, the information about the tag group + element is lost in this representation, which could make debugging difficult
+  - **decision: Use hex representation to simplify key as a single int/str value while maintaining readability**
 
 ## APIs
 1. 'upload_file()'
