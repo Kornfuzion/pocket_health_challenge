@@ -65,20 +65,23 @@ class FileStorageService:
 	@classmethod
 	def upload_dicom_file(
 		cls, 
-		original_file: Optional["werkzeug.FileStorage"], 
+		storage_handle: str,
+		file: Optional["werkzeug.FileStorage"], 
+	) -> Optional[str]:
+		dicom_path = cls.get_dcm_storage_path(storage_handle)
+		file.save(dicom_path)
+
+	@classmethod
+	def upload_image_file(
+		cls, 
+		storage_handle: str,
 		dicom_file: "pydicom.dataset.FileDataset",
 	) -> Optional[str]:
-		storage_handle = cls.get_unique_storage_handle()
-		dicom_path = cls.get_dcm_storage_path(storage_handle)
 		image_path = cls.get_png_storage_path(storage_handle)
-
 		image = convert_dcm_to_png(
 			dicom_file,
 		)
-		original_file.save(dicom_path)
 		image.save(image_path)
-
-		return storage_handle
 
 	@classmethod
 	def validate_dicom_file(

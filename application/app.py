@@ -17,10 +17,18 @@ def upload_file() -> Response:
     if request.method == 'POST':
         file = request.files.get("file")
         dicom_file = FileStorageService.validate_dicom_file(file)
+
         if not dicom_file:
             return "Invalid File.", 400
-        storage_handle = FileStorageService.upload_dicom_file(file, dicom_file)
+
+        storage_handle = FileStorageService.get_unique_storage_handle()
+        # TODO: Make these atomic so that either both uploads succeed, 
+        #       or partially uploaded files are deleted
+        FileStorageService.upload_dicom_file(storage_handle, file)
+        FileStorageService.upload_image_file(storage_handle, dicom_file)
+
         return {"storage_handle": storage_handle}, 201
+
     elif app.config["DEBUG"]:
         # GET form for debugging uploads, not available in prod
         return '''
@@ -32,6 +40,7 @@ def upload_file() -> Response:
           <input type=submit value=Upload>
         </form>
         '''
+        
     else:
         return "Invalid path.", 404
 
