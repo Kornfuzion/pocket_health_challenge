@@ -21,6 +21,8 @@ pip install -r requirements.txt
 
 ## Running locally
 ```
+# **Within /application, run:**
+
 # Debug Mode
 flask --app application/app --debug run
 
@@ -31,7 +33,9 @@ flask --app application/app run
 
 ## Running tests
 ```
-./application/tests/test.sh
+# Within /application/tests, run:
+
+./test.sh
 ```
 <img width="999" alt="Screen Shot 2022-11-04 at 1 10 19 PM" src="https://user-images.githubusercontent.com/7553119/200039884-2c5e9a51-27b5-45d6-99a2-1639708b7580.png">
 
