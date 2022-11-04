@@ -1,6 +1,9 @@
 # PocketHealth Coding Challenge
 A simple microservice to upload DCM files, read DCM/PNG files, fetch DCM attributes by tag
 
+## Problem Statement/Specification
+[Backend_Programming_Challenge.pdf](https://github.com/Kornfuzion/pocket_health_challenge/files/9941528/Backend_Programming_Challenge.pdf)
+
 ## APIs
 1. 'upload_file()'
 2. 'download_dicom_file()'
