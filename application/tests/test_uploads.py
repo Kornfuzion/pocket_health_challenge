@@ -14,7 +14,7 @@ def test_file_upload(test_client: "FlaskClient", test_file_path: str) -> None:
     assert response.status_code == 201
 
 
-def test_file_upload_wrong_file_type(test_client: "FlaskClient") -> None:
+def test_file_upload_bad_file_type(test_client: "FlaskClient") -> None:
     # 1. Upload the file
     response = upload_test_file(test_client, TEST_INVALID_FILE_PATH)
 

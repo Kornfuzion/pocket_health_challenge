@@ -12,9 +12,9 @@ app.config["DICOM_FOLDER"] = os.path.abspath("../uploads/DCM")
 app.config["IMAGE_FOLDER"] = os.path.abspath("../uploads/PNG")
 
 
-@app.route('/upload_file', methods=['GET', 'POST'])
+@app.route("/upload_file", methods=["GET", "POST"])
 def upload_file() -> Response:
-    if request.method == 'POST':
+    if request.method == "POST":
         file = request.files.get("file")
         dicom_file = FileStorageService.validate_dicom_file(file)
 
@@ -30,7 +30,7 @@ def upload_file() -> Response:
         return {"storage_handle": storage_handle}, 201
 
     elif app.config["DEBUG"]:
-        # GET form for debugging uploads, not available in prod
+        # GET form for debugging in TEST/DEBUG mode
         return '''
         <!doctype html>
         <title>Upload new File</title>
@@ -40,8 +40,9 @@ def upload_file() -> Response:
           <input type=submit value=Upload>
         </form>
         '''
-        
+
     else:
+        # GET not supported in prod
         return "Invalid path.", 404
 
 
@@ -63,11 +64,17 @@ def download_image_file(storage_handle: str) -> Response:
 
 @app.route("/header_attributes/<storage_handle>", methods=["GET"])
 def get_header_attributes(storage_handle: str) -> Response:
-    tags = set(json.loads(request.args.get('tags', "[]")))
+    try:
+        tag_keys = set(json.loads(request.args.get("tags", "[]")))
+    except (JSONDecodeError, TypeError):
+        return "Invalid tags formatting.", 400
+    if not DicomAttributeExtractor.validate_tag_keys(tag_keys):
+        return f"Invalid tags: {tag_keys}.", 400
+
     try:
         return DicomAttributeExtractor.extract_dicom_attributes(
             FileStorageService.get_dcm_storage_path(storage_handle),
-            tags,
+            tag_keys,
         )
     except FileNotFoundError:
         return "File not found.", 404

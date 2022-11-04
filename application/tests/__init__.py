@@ -4,9 +4,9 @@ import os
 from typing import Generator
 
 
+# Stub to make tests + decorators cooperate
 @pytest.fixture(scope="module")
 def test_file_path():
-    # Stub to make tests + decorators cooperate
     pass
 
 

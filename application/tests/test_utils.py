@@ -11,41 +11,41 @@ TEST_INVALID_FILE_PATH: str = os.path.abspath("./test_data/invalid_example.dcm")
 
 EXPECTED_HEADER_DATA: Dict[str, str] = {
     TEST_FILE_PATHS[0]: {
-        '(0008,0005)': {
+        '0x00080005': {
             'VR': 'CS', 
             'name': 'Specific Character Set', 
             'value': 'ISO_IR 100'
         }, 
-        '(0008,0008)': {
+        '0x00080008': {
             'VR': 'CS', 
             'name': 'Image Type', 
             'value': "['ORIGINAL', 'PRIMARY', 'AXIAL']"
         }, 
-        '(0008,0014)': {
+        '0x00080014': {
             'VR': 'UI', 
             'name': 'Instance Creator UID', 
             'value': '1.3.6.1.4.1.5962.3'
         }
     },
     TEST_FILE_PATHS[1]: {
-        '(0008,0005)': {
+        '0x00080005': {
             'VR': 'CS', 
             'name': 'Specific Character Set', 
             'value': 'ISO_IR 100'
         }, 
-        '(0008,0008)': {
+        '0x00080008': {
             'VR': 'CS', 
             'name': 'Image Type', 
             'value': "['ORIGINAL', 'PRIMARY', 'M', 'ND']"
         }
     },
     TEST_FILE_PATHS[2]: {
-        '(0008,0005)': {
+        '0x00080005': {
             'VR': 'CS', 
             'name': 'Specific Character Set', 
             'value': 'ISO_IR 192'
         }, 
-        '(0008,0008)': {
+        '0x00080008': {
             'VR': 'CS', 
             'name': 'Image Type', 
             'value': "['ORIGINAL', 'PRIMARY']"
@@ -58,10 +58,9 @@ def upload_test_file(test_client: "FlaskClient", file_path: str = TEST_FILE_PATH
     with open(file_path, "rb") as fh:
         data = {"file": (BytesIO(fh.read()), "file.dcm")}
     return test_client.post(
-        url_for('upload_file'), 
+        url_for("upload_file"), 
         data=data, 
-        follow_redirects=True,
-        content_type='multipart/form-data',
+        content_type="multipart/form-data",
     )
 
 
