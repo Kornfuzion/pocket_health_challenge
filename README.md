@@ -24,8 +24,10 @@ A simple microservice to upload DCM files, read DCM/PNG files, fetch DCM attribu
 
 ## Setup
 <pre>
+# 1. Clone repo
 <b>git clone https://github.com/Kornfuzion/pocket_health_challenge</b>
 
+# 2. Setup python virtual environment
 <b>python3 -m venv env</b>
 <b>source env/bin/activate</b>
 <b>pip install -r requirements.txt</b>
