@@ -82,7 +82,7 @@ Test dicom files can be added or removed, as long as they adhere to the naming s
    1. requires virtual env setup and package installation. Ideally this can be condensed into a container/Docker config for easy deployment on a production web server.
 
 6. **DICOM + PNG file uploads cannot be bundled into an atomic operation** 
-   1. Not robust to partial failure + retry. In production, this would lead to duplicate/orphaned DICOM files (first request fails after DICOM upload, retried and second request succeeds in reuploading DICOM + PNG). Some ideas on how to improve on this given the time/resources:
+   1. Not robust to partial failure + retry. In production, this would lead to duplicate/orphaned DICOM files (first request fails after DICOM upload, retried and second request succeeds in reuploading DICOM + PNG). One possible solution could look like:
 
       a. Upload the DICOM with TTL or store some additional information in a "pending uploads" DB containing (storage_handle, upload_time)
       
