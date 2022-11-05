@@ -178,7 +178,7 @@ Test dicom files can be added or removed, as long as they adhere to the naming s
    2. Implement authorization via OAuth2
    
 5. **Currently only configured to run locally** 
-   1. requires virtual env setup and package installation. Ideally this can be condensed into a container/Docker config for easy deployment on a production web server.
+   1. Requires virtual env setup and package installation. Ideally this can be condensed into a container/Docker config for easy deployment on a production web server.
 
 6. **DICOM + PNG file uploads cannot be bundled into an atomic operation** 
    1. Not robust to partial failure + retry. In production, this would lead to duplicate/orphaned DICOM files (first request fails after DICOM upload, retried and second request succeeds in reuploading DICOM + PNG). One possible solution could look like:
