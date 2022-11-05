@@ -27,8 +27,8 @@ def <b>upload_file()</b> -> Response:
 
 | Request| | |
 |:---| :--- | :-- |
-| |Path| /upload_file|
-| |POST| Expects file using name="file", ContentType=multipart/form-data|
+| |Path| <b>/upload_file</b>|
+| |POST| Expects file using name="<b>file</b>", ContentType=multipart/form-data|
 
 |Response        | | |
 |:---| :--- | :-- |
@@ -51,8 +51,8 @@ def <b>download_dicom_file(storage_handle: str)</b> -> Response:
 
 | Request| | |
 |:---| :--- | :-- |
-| |Path| /uploads/dicom/&lt;storage_handle&gt;|
-| |GET| storage_handle str = UUID returned from upload_file()|
+| |Path| <b>/uploads/dicom/&lt;storage_handle&gt;</b>|
+| |GET| <b>storage_handle</b>: str = UUID returned from upload_file()|
 
 |Response        | | |
 |:---| :--- | :-- |
@@ -72,8 +72,8 @@ def <b>download_image_file(storage_handle: str)</b> -> Response:
 
 | Request| | |
 |:---| :--- | :-- |
-| |Path| /uploads/dicom/&lt;storage_handle&gt;|
-| |GET| storage_handle str = UUID returned from upload_file()|
+| |Path| <b>/uploads/dicom/&lt;storage_handle&gt;</b>|
+| |GET| <b>storage_handle</b>: str = UUID returned from upload_file()|
 
 |Response        | | |
 |:---| :--- | :-- |
@@ -93,10 +93,10 @@ def <b>get_header_attributes(storage_handle: str)</b> -> Response:
 
 | Request| | |
 |:---| :--- | :-- |
-| |Path| /header_attributes/&lt;storage_handle&gt;|
-| |GET| storage_handle str = UUID returned from upload_file()|
-| | | tags: List[str] = List of tags in hex representation |
-| |Example| [0x00080005]|
+| |Path| <b>/header_attributes/&lt;storage_handle&gt;</b>|
+| |GET| <b>storage_handle</b>: str = UUID returned from upload_file()|
+| | | <b>tags</b>: List[str] = List of tags in hex representation |
+| |Example| tags = ["0x00080005"]|
 | |Note|request with no tags included returns all tags on the DICOM file |
 
 |Response        | | |
@@ -110,8 +110,10 @@ def <b>get_header_attributes(storage_handle: str)</b> -> Response:
 | |Bad storage_handle|404 File not found.|
 
 <pre>
+# get_header_attributes()
+
 # Request
-{"tags": [0x00080005]}
+{"tags": ["0x00080005"]}
 
 # Response
 {
