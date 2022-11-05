@@ -1,5 +1,5 @@
 # PocketHealth Backend Coding Challenge: File Server
-A simple proof-of-concept microservice to upload DCM files, read DCM/PNG files, fetch DCM attributes by tag. Given the constraints of this project, we omit a few features necessary for productionization, described in Limitations/ Notes below.
+A simple proof-of-concept microservice to upload DCM files, read DCM/PNG files, fetch DCM attributes by tag. Given the constraints of this project, we omit a few features necessary for productionization, described in **Limitations/ Future Improvements** below.
 
 For simplicity, this implementation avoids the concept of users and user authentication/authorization.
 
@@ -61,30 +61,36 @@ The integration tests exercise all major functionality and error cases of our mi
 Test dicom files can be added or removed, as long as they adhere to the naming scheme of example{0}.dcm -> example{n}.dcm. Tests are configured to automatically run across all test files in the test_data directory.
 
 ## Limitations/ Future Improvements
-1. Given the constraints of this challenge, we are using the server's local file system. This means our servers are stateful and we'd need some kind of routing scheme to figure out which users should hit which servers to find their data. Ideally we leverage a distributed file store that can scale and also support additional features such as access control.
+1. **Files are stored in the server's local file system**
+   1. This means our servers are stateful and we'd need some kind of routing scheme to figure out which users should hit which servers to find their data. Ideally we leverage a distributed file store that can scale and also support additional features such as access control.
 
-2. File name generation uses UUID, which minimizes the probability of collision, but can still cause unexpected data loss if storage_handle collides. In a production system with user_id provided, we could create an even safer file name. For example, something like:
+2. **UUID storage handle can still collide** 
+   1. UUID minimizes the probability of collision, but can still cause unexpected data loss if storage_handle collides. In a production system with user_id provided, we could create an even safer file name. For example, something like:
    <pre>
    # It's unlikely for a user to upload twice in the same millisecond/microsecond AND experience UUID collision
    <b>storage_handle = f"{user_id}{uuid()}{current_timestamp()}"</b>
    </pre>
 
-3. Lack of user->file association
-   1. Since file names/folders contain valuable information (e.g. sequence number for slices of the same scan) we would need a way to associate users->files. We could create a simple relational database which maps (user_id, file_name) -> storage_handle. This would allow users to query for all of their uploads by file name and prevent collisions via uniqueness constraint on (user_id, file_name).
+3. **Lack of user->file association**
+   1. Since file names/folders contain valuable information (e.g. sequence number for slices of the same scan) we would need a way to associate users->files. We could create a simple relational database which maps (user_id, file_name) -> storage_handle. This would allow users to query for all of their uploads by file name and prevent collisions (on a per-user, per-file_name basis) by using a uniqueness constraint on (user_id, file_name).
    
-4. In a production environment we would require additional security/authorization measures
+4. **Lack of security/authorization measures**
    1. Set up TLS certificates to serve requests over HTTPS
    2. Implement authorization via OAuth2
    
-5. Currently this is only configured to run locally, requiring some virtual env setup and package installation. Ideally this can be condensed into a container/Docker config for easy deployment on a production server.
+5. **Currently only configured to run locally** 
+   1. requires virtual env setup and package installation. Ideally this can be condensed into a container/Docker config for easy deployment on a production web server.
 
-6. DICOM + PNG file uploads cannot be bundled into an atomic operation and are not idempotent on partial failure + retry. In production, this would mean we could have duplicate/orphaned DICOM files (first request fails after DICOM upload, retried and second request succeeds in reuploading DICOM + PNG). Some ideas on how to improve on this given the time/resources:
+6. **DICOM + PNG file uploads cannot be bundled into an atomic operation** 
+   1. Not robust to partial failure + retry. In production, this would lead to duplicate/orphaned DICOM files (first request fails after DICOM upload, retried and second request succeeds in reuploading DICOM + PNG). Some ideas on how to improve on this given the time/resources:
 
-   a. Upload the DICOM with TTL or upload the DICOM including some additional attribute finished_processing=False, upload_time=X
-   
-   b. Use a message/task queue (could use user_id as topic, but upload ordering doesn't exactly matter), enqueue a message containing the storage_handle
-   
-   c. Message queue calls to task to perform DICOM->PNG or other image processing, upload the PNG file, remove TTL on DICOM file/ set finished_processing=True on DICOM file
-   
-   d. If a partial failure occurs between the DICOM upload and message enqueue, either it will eventually be deleted due to TTL or cleaned up by an async job when the file is older than N days and finished_processing=False (which should be okay if N is significantly larger than the queue latency SLA, giving some buffer for issues in production)
-7. Add unit tests + better integration test mocking to avoid flakiness from actual file upload/download on the server
+      a. Upload the DICOM with TTL or store some additional information in a "pending uploads" DB containing (storage_handle, upload_time)
+      
+      b. Use a message/task queue (could use user_id as topic, but upload ordering doesn't exactly matter), enqueue a message containing the storage_handle
+      
+      c. Message queue calls to task to perform DICOM->PNG or other image processing, upload the PNG file, remove TTL on DICOM file/ delete the entry from the "pending uploads" DB.
+      
+      d. If a partial failure occurs between the DICOM upload and message enqueue, either it will eventually be deleted due to TTL or cleaned up by an async job when the file is older than N days (N=14->30 to provide buffer for issues in production which may increase processing delay)
+      
+7. **Improve tests**
+   1. Add unit tests + better integration test mocking to avoid flakiness from actual file upload/download on the server
