@@ -19,7 +19,7 @@ For simplicity, this implementation avoids the concept of users and user authent
   - **decision: Use hex representation for tag query to simplify key as a single int/str value while maintaining readability**
 
 ## APIs
-**Upload File**
+## Upload File
 <pre>
 @app.route("<b>/upload_file</b>", methods=["GET", "POST"])
 def <b>upload_file()</b> -> Response:
@@ -43,7 +43,7 @@ def <b>upload_file()</b> -> Response:
 | |Bad file/ wrong file type|400 Invalid file.|
  
 
-**Download DICOM File**
+## Download DICOM File
 <pre>
 @app.route("<b>/uploads/dicom/&lt;storage_handle&gt;</b>", methods=["GET"])
 def <b>download_dicom_file(storage_handle: str)</b> -> Response:
@@ -64,7 +64,7 @@ def <b>download_dicom_file(storage_handle: str)</b> -> Response:
 | |GET request in non-debug mode|404 Invalid path.|
 | |Bad storage_handle|404 File not found.|
            
-**Download PNG File**
+## Download PNG File
 <pre>
 @app.route("<b>/uploads/image/&lt;storage_handle&gt;</b>", methods=["GET"])
 def <b>download_image_file(storage_handle: str)</b> -> Response:
@@ -85,7 +85,7 @@ def <b>download_image_file(storage_handle: str)</b> -> Response:
 | |GET request in non-debug mode|404 Invalid path.|
 | |Bad storage_handle|404 File not found.|
        
-**Get Header Attributes**
+## Get Header Attributes
 <pre>
 @app.route("<b>/header_attributes/&lt;storage_handle&gt;</b>", methods=["GET"])
 def <b>get_header_attributes(storage_handle: str)</b> -> Response:
