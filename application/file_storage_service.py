@@ -13,7 +13,7 @@ class FileStorageService:
 	Abstract away details regarding file paths, ID generation, I/O.
 
 	Currently this uses the local file system, but it could be
-	later augmented to make a request to an external distributed file system.
+	later augmented to make requests to an external distributed file system.
 	"""
 	DCM_EXTENSION: str = "dcm"
 	PNG_EXTENSION: str = "png"
@@ -84,7 +84,7 @@ class FileStorageService:
 		image.save(image_path)
 
 	@classmethod
-	def validate_dicom_file(
+	def get_dicom_file(
 		cls, 
 		file: Optional["werkzeug.FileStorage"]
 	) -> Optional["pydicom.dataset.FileDataset"]:

@@ -16,7 +16,7 @@ app.config["IMAGE_FOLDER"] = os.path.abspath("../uploads/PNG")
 def upload_file() -> Response:
     if request.method == "POST":
         file = request.files.get("file")
-        dicom_file = FileStorageService.validate_dicom_file(file)
+        dicom_file = FileStorageService.get_dicom_file(file)
 
         if not dicom_file:
             return "Invalid File.", 400
