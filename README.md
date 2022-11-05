@@ -19,10 +19,73 @@ For simplicity, this implementation avoids the concept of users and user authent
   - **decision: Use hex representation for tag query to simplify key as a single int/str value while maintaining readability**
 
 ## APIs
-1. 'upload_file()'
-2. 'download_dicom_file()'
-3. 'download_image_file()'
-4. 'get_header_attributes()'
+**Upload File**
+<pre>
+@app.route("<b>/upload_file</b>", methods=["GET", "POST"])
+def <b>upload_file()</b> -> Response:
+</pre>
+
+Request [POST]:
+           - Expects file using name="file", ContentType=multipart/form-data
+          
+Response:
+           - {"storage_handle": <storage_handle>}
+              - Where <storage_handle> is a UUID containing alphanumerical characters of the form ef9b58755f8d4288bfcde5c2365e5ebd
+
+**Download DICOM File**
+<pre>
+@app.route("<b>/uploads/dicom/&lt;storage_handle&gt;</b>", methods=["GET"])
+def <b>download_dicom_file(storage_handle: str)</b> -> Response:
+</pre>
+
+Request [GET]:
+           - storage_handle: str = UUID returned from upload_file()
+          
+Response:
+           - DICOM file 
+           
+**Download PNG File**
+<pre>
+@app.route("<b>/uploads/image/&lt;storage_handle&gt;</b>", methods=["GET"])
+def <b>download_image_file(storage_handle: str)</b> -> Response:
+</pre>
+
+Request [GET]:
+           - storage_handle: str = UUID returned from upload_file()
+          
+Response:
+           - PNG file
+
+**Get Header Attributes**
+<pre>
+@app.route("<b>/header_attributes/&lt;storage_handle&gt;</b>", methods=["GET"])
+def <b>get_header_attributes(storage_handle: str)</b> -> Response:
+</pre>
+
+Request [GET]:
+           - storage_handle: str = UUID returned from upload_file()
+           - tags: List[str] = List of tags in hex representation
+             - Example: [0x00080005]
+             - Note: request with no tags included returns all tags on the DICOM file
+
+Response:
+           - JSON dictionary mapping tag->info: {
+               <tag>: {
+                  "VR": <VR>
+                  "name": <name>
+                  "value": <value>
+               },
+               ...
+             }
+           - Example: 
+             {
+               "0x00080005": {
+                  "VR": "CS",
+                  "name": "Specific Character Set",
+                  "value": "ISO_IR 100",
+               }
+             }
+             
 
 ## Setup
 <pre>
