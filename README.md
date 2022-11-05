@@ -86,11 +86,11 @@ Test dicom files can be added or removed, as long as they adhere to the naming s
 
       a. Upload the DICOM with TTL or store some additional information in a "pending uploads" DB containing (storage_handle, upload_time)
       
-      b. Use a message/task queue (could use user_id as topic, but upload ordering doesn't exactly matter), enqueue a message containing the storage_handle
+      b. Use a message/task queue (could use topic=user_id for load balancing. upload ordering doesn't really matter), enqueue a message containing the storage_handle
       
       c. Message queue calls to task to perform DICOM->PNG or other image processing, upload the PNG file, remove TTL on DICOM file/ delete the entry from the "pending uploads" DB.
       
-      d. If a partial failure occurs between the DICOM upload and message enqueue, either it will eventually be deleted due to TTL or cleaned up by an async job when the file is older than N days (N=14->30 to provide buffer for issues in production which may increase processing delay)
+      d. If a partial failure occurs between the DICOM upload and message enqueue, either the file will eventually be deleted due to TTL or deleted up by a daily async job when the file is older than N days (N=14->30 to provide buffer for issues in production which may increase processing delay)
       
 7. **Improve tests**
    1. Add unit tests + better integration test mocking to avoid flakiness from actual file upload/download on the server
