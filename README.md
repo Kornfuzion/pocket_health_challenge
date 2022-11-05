@@ -25,12 +25,20 @@ For simplicity, this implementation avoids the concept of users and user authent
 def <b>upload_file()</b> -> Response:
 </pre>
 
-Request [POST]:
-           - Expects file using name="file", ContentType=multipart/form-data
-          
-Response:
-           - {"storage_handle": <storage_handle>}
-              - Where <storage_handle> is a UUID containing alphanumerical characters of the form ef9b58755f8d4288bfcde5c2365e5ebd
+||||
+|:---| :--- | :-- |
+| Request| | |
+| |Path| /upload_file|
+| |POST| Expects file using name="file", ContentType=multipart/form-data|
+|Response        | | |
+| |Status code                                                    | 201 CREATED|
+| |Response   | {"storage_handle": <storage_handle>}|
+| |Description|<storage_handle> is a UUID containing alphanumerical characters|
+| |Example    | {"storage_handle": "ef9b58755f8d4288bfcde5c2365e5ebd"}|
+|Errors| | |
+| |GET request in non-debug mode|404 Invalid path.|
+| |Bad file/ wrong file type|400 Invalid file.|
+ 
 
 **Download DICOM File**
 <pre>
@@ -43,6 +51,9 @@ Request [GET]:
           
 Response:
            - DICOM file 
+
+Errors:
+           - Bad storage_handle: 404 File not found.
            
 **Download PNG File**
 <pre>
@@ -55,6 +66,9 @@ Request [GET]:
           
 Response:
            - PNG file
+           
+Errors:
+           - Bad storage_handle: 404 File not found.
 
 **Get Header Attributes**
 <pre>
@@ -86,6 +100,9 @@ Response:
                }
              }
              
+Errors:
+           - Bad storage_handle: 404 File not found.
+           - Invalid tags      : 400 Invalid tags.
 
 ## Setup
 <pre>
