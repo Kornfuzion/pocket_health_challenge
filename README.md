@@ -25,17 +25,20 @@ For simplicity, this implementation avoids the concept of users and user authent
 def <b>upload_file()</b> -> Response:
 </pre>
 
-||||
-|:---| :--- | :-- |
 | Request| | |
+|:---| :--- | :-- |
 | |Path| /upload_file|
 | |POST| Expects file using name="file", ContentType=multipart/form-data|
+
 |Response        | | |
+|:---| :--- | :-- |
 | |Status code                                                    | 201 CREATED|
 | |Response   | {"storage_handle": <storage_handle>}|
 | |Description|<storage_handle> is a UUID containing alphanumerical characters|
 | |Example    | {"storage_handle": "ef9b58755f8d4288bfcde5c2365e5ebd"}|
-|Errors| | |
+
+|Errors|Reason|Error Code|
+|:---| :--- | :-- |
 | |GET request in non-debug mode|404 Invalid path.|
 | |Bad file/ wrong file type|400 Invalid file.|
  
@@ -46,14 +49,20 @@ def <b>upload_file()</b> -> Response:
 def <b>download_dicom_file(storage_handle: str)</b> -> Response:
 </pre>
 
-Request [GET]:
-           - storage_handle: str = UUID returned from upload_file()
-          
-Response:
-           - DICOM file 
+| Request| | |
+|:---| :--- | :-- |
+| |Path| /uploads/dicom/&lt;storage_handle&gt;|
+| |GET| storage_handle str = UUID returned from upload_file()|
 
-Errors:
-           - Bad storage_handle: 404 File not found.
+|Response        | | |
+|:---| :--- | :-- |
+| |Status code                                                    | 200 SUCCESS|
+| |Response   | DICOM file |
+
+|Errors|Reason|Error Code|
+|:---| :--- | :-- |
+| |GET request in non-debug mode|404 Invalid path.|
+| |Bad storage_handle|404 File not found.|
            
 **Download PNG File**
 <pre>
@@ -61,19 +70,53 @@ Errors:
 def <b>download_image_file(storage_handle: str)</b> -> Response:
 </pre>
 
-Request [GET]:
-           - storage_handle: str = UUID returned from upload_file()
-          
-Response:
-           - PNG file
-           
-Errors:
-           - Bad storage_handle: 404 File not found.
+| Request| | |
+|:---| :--- | :-- |
+| |Path| /uploads/dicom/&lt;storage_handle&gt;|
+| |GET| storage_handle str = UUID returned from upload_file()|
 
+|Response        | | |
+|:---| :--- | :-- |
+| |Status code                                                    | 200 SUCCESS|
+| |Response   | PNG file |
+
+|Errors|Reason|Error Code|
+|:---| :--- | :-- |
+| |GET request in non-debug mode|404 Invalid path.|
+| |Bad storage_handle|404 File not found.|
+       
 **Get Header Attributes**
 <pre>
 @app.route("<b>/header_attributes/&lt;storage_handle&gt;</b>", methods=["GET"])
 def <b>get_header_attributes(storage_handle: str)</b> -> Response:
+</pre>
+
+| Request| | |
+|:---| :--- | :-- |
+| |Path| /header_attributes/&lt;storage_handle&gt;|
+| |GET| storage_handle str = UUID returned from upload_file()|
+| | | tags: List[str] = List of tags in hex representation |
+| |Example| [0x00080005]|
+| |Note|request with no tags included returns all tags on the DICOM file |
+
+|Response        | | |
+|:---| :--- | :-- |
+| |Status code                                                    | 200 SUCCESS|
+| |Response   | JSON Dict[str, Dict[str, str]] mapping tag->info |
+
+|Errors|Reason|Error Code|
+|:---| :--- | :-- |
+| |Invalid tags  |400 Invalid tags.|
+| |Bad storage_handle|404 File not found.|
+
+<pre>
+{
+   "0x00080005": {
+      "VR": "CS",
+      "name": "Specific Character Set",
+      "value": "ISO_IR 100",
+   }
+}
 </pre>
 
 Request [GET]:
