@@ -110,6 +110,10 @@ def <b>get_header_attributes(storage_handle: str)</b> -> Response:
 | |Bad storage_handle|404 File not found.|
 
 <pre>
+# Request
+{"tags": [0x00080005]}
+
+# Response
 {
    "0x00080005": {
       "VR": "CS",
@@ -118,34 +122,6 @@ def <b>get_header_attributes(storage_handle: str)</b> -> Response:
    }
 }
 </pre>
-
-Request [GET]:
-           - storage_handle: str = UUID returned from upload_file()
-           - tags: List[str] = List of tags in hex representation
-             - Example: [0x00080005]
-             - Note: request with no tags included returns all tags on the DICOM file
-
-Response:
-           - JSON dictionary mapping tag->info: {
-               <tag>: {
-                  "VR": <VR>
-                  "name": <name>
-                  "value": <value>
-               },
-               ...
-             }
-           - Example: 
-             {
-               "0x00080005": {
-                  "VR": "CS",
-                  "name": "Specific Character Set",
-                  "value": "ISO_IR 100",
-               }
-             }
-             
-Errors:
-           - Bad storage_handle: 404 File not found.
-           - Invalid tags      : 400 Invalid tags.
 
 ## Setup
 <pre>
